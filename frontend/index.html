@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt Eval Lab</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Prompt Evaluation</h1>
+    <p>Compare how prompting strategies change the correctness, quality, security and cost of generated code.</p>
+  </header>
+  <div class="main-grid">
+    <div>
+      <div class="card">
+        <h2>Set up an experiment</h2>
+        <label>Model provider</label>
+        <select id="provider"></select>
+        <div id="providerHint" class="hint"></div>
+        <label>Model name (optional)</label>
+        <input type="text" id="model" placeholder="Use the default from .env">
+        <label>Programming tasks</label>
+        <div id="taskList" class="checkbox-group hint"></div>
+        <label>Prompting strategies</label>
+        <div id="stratList" class="checkbox-group hint"></div>
+        <div>Repeats per combination/label</div>  
+        <input type="number" id="repeats" value="1" min="1" max="10">
+        <div class="hint">Use 3 or more with a real model, since outputs vary between calls.</div>
+        <button id="runBtn" class="primary">Run experiment</button>
+        <div id="formError" class="error"></div>
+      </div>
+      <div class="card">
+        <h2>Previous runs</h2>
+        <select id="pastRuns"><option value="">None yet</option></select>
+      </div>
+    </div>
+    <div>
+      <div id="empty" class="card" style="text-align: center; padding: 40px; color: var(--muted);">
+        Configure and run an experiment on the left to see results.
+      </div>
+      <div id="progressBox" class="card hidden" style="text-align: center; padding: 40px;">
+        <h3 id="progressLabel" style="margin-bottom: 8px;">Running experiment...</h3>
+        <p id="progressCount" class="hint" style="margin-bottom: 16px;"></p>
+        <div style="background: var(--border); border-radius: 4px; height: 8px; width: 100%; overflow: hidden;">
+          <div id="progressFill" style="background: var(--primary); width: 0%; height: 100%; transition: width 0.3s;"></div>
+        </div>
+      </div>
+      <div id="report" class="hidden">
+        <div class="banner">
+          <span id="verdictText"></span>
+          <a id="csvLink" href="#" target="_blank">Download CSV</a>
+        </div>
+        <div class="card">
+          <h2>Correctness by task and strategy</h2>
+          <p class="hint">Share of test cases passed. Click a cell to read the generated code.</p>
+          <div style="overflow-x: auto;">
+            <table id="matrix"></table>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-box">
+            <h3>Solved all tests (%)</h3>
+            <canvas id="chSuccess"></canvas>
+          </div>
+          <div class="chart-box">
+            <h3>Tokens per sample</h3>
+            <canvas id="chTokens"></canvas>
+          </div>
+          <div class="chart-box">
+            <h3>Latency per sample (s)</h3>
+            <canvas id="chLatency"></canvas>
+          </div>
+          <div class="chart-box">
+            <h3>Quality and security (0-100)</h3>
+            <canvas id="chScores"></canvas>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 16px;">
+          <h2>Strategy Summary</h2>
+          <div style="overflow-x: auto;"><table id="summary"></table></div>
+        </div>
+        <div class="card" style="margin-top: 16px;">
+          <h2>Generated Samples</h2>
+          <div style="overflow-x: auto;"><table id="samples"></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <dialog id="codeDialog">
+    <h3 id="dlgTitle"></h3>
+    <p id="dlgMeta" class="meta"></p>
+    <pre><code id="dlgCode"></code></pre>
+    <p id="dlgError" class="error"></p>
+    <form method="dialog"><button>Close</button></form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
